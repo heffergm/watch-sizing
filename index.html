@@ -165,7 +165,7 @@ function calculate(){
    maxDisplay.style.color='#0969da';
  }
   
- document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]}mm (shape adjustment)</i>`;
+ document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance.toFixed(1)}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]}mm (shape adjustment)</i>`;
     
  updateURL(raw,unit,d,c,integrated?'yes':'no',s,enteredLugRaw);
 }
