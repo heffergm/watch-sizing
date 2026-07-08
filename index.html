@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Watch Effective Size Calculator</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:40px}
+.container{max-width:560px;margin:auto;background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.15)}
+label{display:block;margin-top:16px;font-weight:bold}
+.row{display:flex;gap:10px}
+.row input{flex:1}
+.row select{width:110px}
+input,select,button{padding:10px;font-size:16px;box-sizing:border-box}
+input,select{width:100%}
+.result{margin-top:24px;background:#eef5ff;padding:20px;border-radius:10px;text-align:center}
+.size{font-size:42px;font-weight:bold;color:#1f6feb}
+.note,.explanation{margin-top:14px;color:#555;line-height:1.5}
+button{margin-top:10px;width:100%}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Watch Effective Size Calculator</h2>
+<p><b>Assumptions:</b> 6.75 inches represents the baseline wrist circumference against which watch sizing is calibrated.</p>
+<p>At this baseline, a 40mm watch serves as the reference point: its perceived size is assumed to match its stated diameter without adjustment.</p>
+<p>Every 0.25" below baseline adds 1 mm to perceived sizing; every 0.25" above subtracts 1 mm.</p>
+
+<label>Wrist Size</label>
+<div class="row">
+<input id="wrist" type="number" step="0.01" value="6.75" oninput="calculate()">
+<select id="unit" onchange="changeUnit()">
+<option value="in">in</option>
+<option value="cm">cm</option>
+</select>
+</div>
+
+<label>Watch Diameter (mm)</label>
+<input id="diameter" type="number" step="0.1" value="40" oninput="calculate()">
+
+<label>Case Type</label>
+<select id="caseType" onchange="calculate()">
+<option value="round">Round</option>
+<option value="square">Square (+1.5 mm)</option>
+<option value="tonneau">Tonneau (+1.5 mm)</option>
+</select>
+
+<div class="result">
+  <div><h2>Effective Visual Size</h2></div>
+<div id="output" class="size"></div>
+<div id="explanation" class="explanation"></div>
+</div>
+</div>
+
+<script>
+const CASE_ADJUSTMENTS={round:0,square:1.5,tonneau:1.5};
+
+function wristInches(){
+ let v=parseFloat(document.getElementById("wrist").value)||0;
+ return document.getElementById("unit").value==="cm"?v/2.54:v;
+}
+function calculate(){
+ const wristIn=wristInches();
+ const raw=document.getElementById("wrist").value;
+ const unit=document.getElementById("unit").value;
+ const d=parseFloat(document.getElementById("diameter").value)||0;
+ const c=document.getElementById("caseType").value;
+ const eff=d+(6.75-wristIn)*4+CASE_ADJUSTMENTS[c];
+ document.getElementById("output").textContent=eff.toFixed(1)+" mm";
+ document.getElementById("explanation").innerHTML=
+ `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
+ updateURL(raw,unit,d,c);
+}
+function updateURL(w,u,s,c){
+ const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c});
+ history.replaceState({},'',location.pathname+'?'+p.toString());
+ document.getElementById("shareLink").value=location.href;
+}
+function loadURL(){
+ const p=new URLSearchParams(location.search);
+ if(p.get("wrist")) wrist.value=p.get("wrist");
+ if(p.get("unit")) unit.value=p.get("unit");
+ if(p.get("size")) diameter.value=p.get("size");
+ if(["round","square","tonneau"].includes(p.get("case"))) caseType.value=p.get("case");
+ calculate();
+}
+function changeUnit(){
+ const input=document.getElementById("wrist");
+ const old=input.value;
+ if(old==="") return;
+ let v=parseFloat(old);
+ if(document.getElementById("unit").value==="cm"){
+   input.value=(v*2.54).toFixed(2);
+ }else{
+   input.value=(v/2.54).toFixed(2);
+ }
+ calculate();
+}
+function copyLink(){
+ navigator.clipboard.writeText(document.getElementById("shareLink").value);
+ alert("Link copied.");
+}
+loadURL();
+</script>
+</body>
+</html>
