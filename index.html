@@ -167,20 +167,27 @@ function calculate(){
   
  document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance.toFixed(1)}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]}mm (shape adjustment)</i>`;
     
- updateURL(raw,unit,d,c,integrated?'yes':'no',s,enteredLugRaw);
+ updateURL(raw,unit,d,c,integrated?'true':'false',s,enteredLugRaw);
 }
 function updateURL(w,u,s,c,i,shape,lug){
- const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c,integrated:i,shape:shape||'neutral',lug:lug||''});
+ const p=new URLSearchParams({wrist_circumference:w,unit:u,watch_diameter:s,watch_case_type:c,watch_integrated_bracelet:i,wrist_shape:shape||'neutral',watch_lug2lug:lug||''});
  history.replaceState({},'',location.pathname+'?'+p.toString());
 }
 function loadURL(){
  const p=new URLSearchParams(location.search);
+ if(p.get("wrist_circumference")) wrist.value=p.get("wrist_circumference");
  if(p.get("wrist")) wrist.value=p.get("wrist");
  if(p.get("unit")) unit.value=p.get("unit");
+ if(p.get("watch_diameter")) diameter.value=p.get("watch_diameter");
  if(p.get("size")) diameter.value=p.get("size");
+ if(p.get("watch_lug2lug")) document.getElementById("lug").value=p.get("watch_lug2lug");
  if(p.get("lug")) document.getElementById("lug").value=p.get("lug");
+ if(["round","square","tonneau"].includes(p.get("watch_case_type"))) caseType.value=p.get("watch_case_type");
  if(["round","square","tonneau"].includes(p.get("case"))) caseType.value=p.get("case");
+ if(["neutral","round","flat"].includes(p.get("wrist_shape"))) document.getElementById("wristShape").value=p.get("wrist_shape");
  if(["neutral","round","flat"].includes(p.get("shape"))) document.getElementById("wristShape").value=p.get("shape");
+ if(p.get("watch_integrated_bracelet")==="true") document.getElementById("integrated").checked=true;
+ if(p.get("watch_integrated_bracelet")==="false") document.getElementById("integrated").checked=false;
  if(p.get("integrated")==="yes") document.getElementById("integrated").checked=true;
  calculate();
 }
