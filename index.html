@@ -33,7 +33,6 @@ button{margin-top:10px;width:100%}
 <p><b>Assumptions:</b> 6.75 inches represents the baseline wrist circumference against which watch sizing is calibrated.</p>
 <p>At this baseline, a 40mm watch serves as the reference point: its perceived size is assumed to match its stated diameter without adjustment.</p>
 <p>Every 0.25" below baseline adds 1 mm to perceived sizing; every 0.25" above subtracts 1 mm.</p>
-<p><b>Sliding Dampening:</b> The size adjustment smoothly decreases as wrist size moves away from the baseline. At extreme sizes (very large or very small wrists), the adjustment is dampened to reflect how watches actually appear.</p>
 
 <label>Wrist Size</label>
 <div class="row">
@@ -82,19 +81,12 @@ function wristInches(){
  let v=parseFloat(document.getElementById("wrist").value)||0;
  return document.getElementById("unit").value==="mm"?v/25.4:v;
 }
-function calculateAdjustmentMultiplier(wristIn){
- const baseline=6.75;
- const deviation=Math.abs(wristIn-baseline);
- 
- const mult=1.0/(1.0+0.436*deviation*deviation);
- return Math.max(0.568,mult);
-}
 function calculate(){
  const wristIn=wristInches();
  
- if(wristIn<4||wristIn>10){
+ if(wristIn<4||wristIn>9){
    document.getElementById("output").textContent="Invalid wrist size";
-   document.getElementById("explanation").innerHTML="Wrist circumference must be between 4 and 10 inches.";
+   document.getElementById("explanation").innerHTML="Wrist circumference must be between 4 and 9 inches.";
    document.getElementById("maxLugToLugDisplay").textContent="–";
    return;
  }
@@ -110,8 +102,7 @@ function calculate(){
    braceletAdj=c==="round"?1:0.5;
  }
   
- const multiplier=calculateAdjustmentMultiplier(wristIn);
- const eff=d+(6.75-wristIn)*4*multiplier+CASE_ADJUSTMENTS[c]+braceletAdj;
+ const eff=d+(6.75-wristIn)*4+CASE_ADJUSTMENTS[c]+braceletAdj;
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
  document.getElementById("explanation").innerHTML=
  `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
