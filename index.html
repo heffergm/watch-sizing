@@ -13,6 +13,13 @@ label{display:block;margin-top:16px;font-weight:bold}
 .row select{width:110px}
 input,select,button{padding:10px;font-size:16px;box-sizing:border-box}
 input,select{width:100%}
+.toggle-container{display:flex;align-items:center;gap:12px;margin-top:10px}
+.toggle-switch{position:relative;display:inline-block;width:50px;height:28px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:28px}
+.slider:before{position:absolute;content:"";height:22px;width:22px;left:3px;bottom:3px;background-color:#fff;transition:.3s;border-radius:50%}
+input:checked+.slider{background-color:#0969da}
+input:checked+.slider:before{transform:translateX(22px)}
 .result{margin-top:24px;background:#eef5ff;padding:20px;border-radius:10px;text-align:center}
 .size{font-size:42px;font-weight:bold;color:#1f6feb}
 .note,.explanation{margin-top:14px;color:#555;line-height:1.5}
@@ -28,10 +35,10 @@ button{margin-top:10px;width:100%}
 
 <label>Wrist Size</label>
 <div class="row">
-<input id="wrist" type="number" step="0.01" value="6.75" oninput="calculate()">
+<input id="wrist" type="number" step="0.1" value="171" oninput="calculate()">
 <select id="unit" onchange="changeUnit()">
 <option value="in">in</option>
-<option value="cm">cm</option>
+<option value="mm" selected>mm</option>
 </select>
 </div>
 
@@ -45,10 +52,24 @@ button{margin-top:10px;width:100%}
 <option value="tonneau">Tonneau (+1.5 mm)</option>
 </select>
 
+<label>Integrated Bracelet?</label>
+<div class="toggle-container">
+<label class="toggle-switch">
+<input type="checkbox" id="integrated" onchange="calculate()">
+<span class="slider"></span>
+</label>
+<span style="font-weight:normal">Yes</span>
+</div>
+
 <div class="result">
   <div><h2>Effective Visual Size</h2></div>
 <div id="output" class="size"></div>
 <div id="explanation" class="explanation"></div>
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd">
+<div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:bold">Your Maximum Lug-to-Lug</div>
+<div id="maxLugToLugDisplay" style="font-size:24px;font-weight:bold;color:#0969da"></div>
+<div style="font-size:12px;color:#999;margin-top:8px"><i>Calculated as wrist circumference ÷ π − 2mm (comfort allowance)</i></div>
+</div>
 </div>
 </div>
 
@@ -57,7 +78,7 @@ const CASE_ADJUSTMENTS={round:0,square:1.5,tonneau:1.5};
 
 function wristInches(){
  let v=parseFloat(document.getElementById("wrist").value)||0;
- return document.getElementById("unit").value==="cm"?v/2.54:v;
+ return document.getElementById("unit").value==="mm"?v/25.4:v;
 }
 function calculate(){
  const wristIn=wristInches();
@@ -65,16 +86,28 @@ function calculate(){
  const unit=document.getElementById("unit").value;
  const d=parseFloat(document.getElementById("diameter").value)||0;
  const c=document.getElementById("caseType").value;
- const eff=d+(6.75-wristIn)*4+CASE_ADJUSTMENTS[c];
+ const integrated=document.getElementById("integrated").checked;
+  
+ let braceletAdj=0;
+ if(integrated){
+   braceletAdj=c==="round"?1:0.5;
+ }
+  
+ const eff=d+(6.75-wristIn)*4+CASE_ADJUSTMENTS[c]+braceletAdj;
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
  document.getElementById("explanation").innerHTML=
- `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
- updateURL(raw,unit,d,c);
+ `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
+  
+ const circumferenceIn=wristIn;
+ const circumferenceMm=circumferenceIn*25.4;
+ const maxLugToLug=circumferenceMm/Math.PI-2;
+ document.getElementById("maxLugToLugDisplay").textContent=maxLugToLug.toFixed(1)+" mm";
+  
+ updateURL(raw,unit,d,c,integrated?'yes':'no');
 }
-function updateURL(w,u,s,c){
- const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c});
+function updateURL(w,u,s,c,i){
+ const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c,integrated:i});
  history.replaceState({},'',location.pathname+'?'+p.toString());
- document.getElementById("shareLink").value=location.href;
 }
 function loadURL(){
  const p=new URLSearchParams(location.search);
@@ -82,6 +115,7 @@ function loadURL(){
  if(p.get("unit")) unit.value=p.get("unit");
  if(p.get("size")) diameter.value=p.get("size");
  if(["round","square","tonneau"].includes(p.get("case"))) caseType.value=p.get("case");
+ if(p.get("integrated")==="yes") document.getElementById("integrated").checked=true;
  calculate();
 }
 function changeUnit(){
@@ -89,10 +123,10 @@ function changeUnit(){
  const old=input.value;
  if(old==="") return;
  let v=parseFloat(old);
- if(document.getElementById("unit").value==="cm"){
-   input.value=(v*2.54).toFixed(2);
+ if(document.getElementById("unit").value==="mm"){
+   input.value=(v*25.4).toFixed(1);
  }else{
-   input.value=(v/2.54).toFixed(2);
+   input.value=(v/25.4).toFixed(0);
  }
  calculate();
 }
