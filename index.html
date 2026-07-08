@@ -77,7 +77,7 @@ button{margin-top:10px;width:100%}
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd">
 <div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:bold">Your Maximum Lug-to-Lug</div>
 <div id="maxLugToLugDisplay" style="font-size:24px;font-weight:bold;color:#0969da"></div>
-<div style="font-size:12px;color:#999;margin-top:8px"><i>Calculated as wrist circumference ÷ π − 2mm (comfort allowance)</i></div>
+<div id="lugExplanation" style="font-size:12px;color:#999;margin-top:8px"><i>Calculated as wrist circumference ÷ π − comfort allowance</i></div>
 </div>
 </div>
 </div>
@@ -129,8 +129,10 @@ function calculate(){
    
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
+ const comfortAllowance=-WRIST_SHAPE_COMFORT[s];
  const maxLugToLug=circumferenceMm/Math.PI+WRIST_SHAPE_COMFORT[s]+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
  document.getElementById("maxLugToLugDisplay").textContent=maxLugToLug.toFixed(1)+" mm";
+ document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]}mm (shape adjustment)</i>`;
    
  updateURL(raw,unit,d,c,integrated?'yes':'no',s);
 }
