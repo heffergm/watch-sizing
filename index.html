@@ -109,9 +109,15 @@ function wristInches(){
 function calculateAdjustmentMultiplier(wristIn){
  const baseline=6.75;
  const deviation=Math.abs(wristIn-baseline);
- 
+  
  const mult=1.0/(1.0+0.25*deviation*deviation);
  return Math.max(0.731,mult);
+}
+function calculateComfortMultiplier(wristIn){
+ const baseline=6.75;
+ const deviation=Math.abs(wristIn-baseline);
+  
+ return 1.0/(1.0+0.25*deviation*deviation);
 }
 function calculate(){
  const wristIn=wristInches();
@@ -143,8 +149,10 @@ function calculate(){
    
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
- const comfortAllowance=-WRIST_SHAPE_COMFORT[s];
- const maxLugToLug=circumferenceMm/Math.PI+WRIST_SHAPE_COMFORT[s]+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
+ const comfortMultiplier=calculateComfortMultiplier(wristIn);
+ const scaledComfort=WRIST_SHAPE_COMFORT[s]*comfortMultiplier;
+ const comfortAllowance=-scaledComfort;
+ const maxLugToLug=circumferenceMm/Math.PI+scaledComfort+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
  document.getElementById("maxLugToLugDisplay").textContent=maxLugToLug.toFixed(1)+" mm";
   
  // handle user-entered lug-to-lug comparison
