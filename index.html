@@ -86,6 +86,7 @@ button{margin-top:10px;width:100%}
 const CASE_ADJUSTMENTS={round:0,square:1.5,tonneau:1.5};
 const WRIST_SHAPE_ADJUSTMENTS={neutral:0,round:0.5,flat:-0.5};
 const WRIST_SHAPE_LUG_ADJUSTMENTS={neutral:0,round:-1.5,flat:1.5};
+const WRIST_SHAPE_COMFORT={neutral:-4,round:-5,flat:-3};
 
 function wristInches(){
  let v=parseFloat(document.getElementById("wrist").value)||0;
@@ -128,7 +129,7 @@ function calculate(){
    
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
- const maxLugToLug=circumferenceMm/Math.PI-2+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
+ const maxLugToLug=circumferenceMm/Math.PI+WRIST_SHAPE_COMFORT[s]+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
  document.getElementById("maxLugToLugDisplay").textContent=maxLugToLug.toFixed(1)+" mm";
    
  updateURL(raw,unit,d,c,integrated?'yes':'no',s);
