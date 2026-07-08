@@ -12,6 +12,7 @@ Watch sizing is subjective and depends on both the watch's stated diameter and t
 - At baseline, a **40mm watch** serves as the reference point
 - For every **0.25" (6.35mm) below** baseline, add **1mm** to perceived sizing
 - For every **0.25" (6.35mm) above** baseline, subtract **1mm** from perceived sizing
+- **Sliding Dampening**: The size adjustment smoothly decreases as wrist size moves away from the baseline. At extreme sizes, the dampening is lighter—e.g., a 40mm on a 9" wrist appears closer to 36mm rather than 34mm.
 
 ## Features
 
