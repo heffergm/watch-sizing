@@ -81,6 +81,18 @@ function wristInches(){
  let v=parseFloat(document.getElementById("wrist").value)||0;
  return document.getElementById("unit").value==="mm"?v/25.4:v;
 }
+function calculateAdjustmentMultiplier(wristIn){
+ const baseline=6.75;
+ const deviation=Math.abs(wristIn-baseline);
+ 
+ if(deviation<=0.25) return 1.0;
+ 
+ if(deviation<=1.0){
+   return 1.0-((deviation-0.25)*0.15);
+ }
+ 
+ return 1.0-0.1125-((deviation-1.0)*0.1);
+}
 function calculate(){
  const wristIn=wristInches();
  const raw=document.getElementById("wrist").value;
@@ -94,7 +106,8 @@ function calculate(){
    braceletAdj=c==="round"?1:0.5;
  }
   
- const eff=d+(6.75-wristIn)*4+CASE_ADJUSTMENTS[c]+braceletAdj;
+ const multiplier=calculateAdjustmentMultiplier(wristIn);
+ const eff=d+(6.75-wristIn)*4*multiplier+CASE_ADJUSTMENTS[c]+braceletAdj;
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
  document.getElementById("explanation").innerHTML=
  `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
