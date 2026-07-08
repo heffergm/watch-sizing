@@ -86,10 +86,19 @@ function calculateAdjustmentMultiplier(wristIn){
  const baseline=6.75;
  const deviation=Math.abs(wristIn-baseline);
  
- return 1.0/(1.0+0.15*deviation*deviation);
+ const mult=1.0/(1.0+0.436*deviation*deviation);
+ return Math.max(0.568,mult);
 }
 function calculate(){
  const wristIn=wristInches();
+ 
+ if(wristIn<4||wristIn>10){
+   document.getElementById("output").textContent="Invalid wrist size";
+   document.getElementById("explanation").innerHTML="Wrist circumference must be between 4 and 10 inches.";
+   document.getElementById("maxLugToLugDisplay").textContent="–";
+   return;
+ }
+ 
  const raw=document.getElementById("wrist").value;
  const unit=document.getElementById("unit").value;
  const d=parseFloat(document.getElementById("diameter").value)||0;
