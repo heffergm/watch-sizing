@@ -32,16 +32,6 @@ Watch sizing is subjective and depends on both the watch's stated diameter and t
 ### URL Sharing
 All parameters are encoded in the URL, allowing you to share specific configurations with others.
 
-## Usage
-
-1. Enter your wrist circumference
-2. Choose your preferred unit (inches or millimeters)
-3. Enter the watch diameter
-4. Select the case type
-5. Toggle integrated bracelet if applicable
-6. View the calculated effective size and maximum lug-to-lug
-7. Share the URL with others to compare watches
-
 ## Hosting
 
 ### Local
