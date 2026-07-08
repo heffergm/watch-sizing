@@ -88,10 +88,10 @@ function calculateAdjustmentMultiplier(wristIn){
  if(deviation<=0.25) return 1.0;
  
  if(deviation<=1.0){
-   return 1.0-((deviation-0.25)*0.15);
+   return 1.0-((deviation-0.25)*0.40);
  }
  
- return 1.0-0.1125-((deviation-1.0)*0.1);
+ return 0.70-((deviation-1.0)*0.35);
 }
 function calculate(){
  const wristIn=wristInches();
