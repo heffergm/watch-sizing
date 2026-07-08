@@ -87,6 +87,7 @@ button{margin-top:10px;width:100%}
 <div class="result">
   <div><h2>Effective Visual Size</h2></div>
 <div id="output" class="size"></div>
+<div id="fitCategory" style="font-size:18px;color:#333;margin-top:6px"></div>
 <div id="explanation" class="explanation"></div>
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd">
 <div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:bold">Your Maximum Lug-to-Lug</div>
@@ -126,6 +127,7 @@ function calculate(){
    document.getElementById("output").textContent="Invalid wrist size";
    document.getElementById("explanation").innerHTML="Wrist circumference must be between 4 and 9 inches.";
    document.getElementById("maxLugToLugDisplay").textContent="–";
+   document.getElementById('fitCategory').textContent='';
    return;
  }
  
@@ -144,9 +146,17 @@ function calculate(){
  const multiplier=calculateAdjustmentMultiplier(wristIn);
  const eff=d+(6.75-wristIn)*4*multiplier+CASE_ADJUSTMENTS[c]+braceletAdj+WRIST_SHAPE_ADJUSTMENTS[s];
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
+ // determine fit category
+ let fit='';
+ if(eff<=36) fit='Fit: Classic';
+ else if(eff>36 && eff<=40) fit='Fit: Modern Standard';
+ else if(eff>40 && eff<=44) fit='Fit: Modern Large';
+ else if(eff>44) fit='Fit: Oversize';
+ document.getElementById('fitCategory').textContent=fit;
+
  document.getElementById("explanation").innerHTML=
  `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> ${s} wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in neutral</b> wrist.`;
-   
+  
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
  const comfortMultiplier=calculateComfortMultiplier(wristIn);
