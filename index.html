@@ -47,6 +47,13 @@ button{margin-top:10px;width:100%}
 <label>Watch Diameter (mm)</label>
 <input id="diameter" type="number" step="0.1" value="40" oninput="calculate()">
 
+<label>Wrist Shape</label>
+<select id="wristShape" onchange="calculate()">
+<option value="neutral">Neutral</option>
+<option value="round">Round</option>
+<option value="flat">Flat</option>
+</select>
+
 <label>Case Type</label>
 <select id="caseType" onchange="calculate()">
 <option value="round">Round</option>
@@ -77,6 +84,8 @@ button{margin-top:10px;width:100%}
 
 <script>
 const CASE_ADJUSTMENTS={round:0,square:1.5,tonneau:1.5};
+const WRIST_SHAPE_ADJUSTMENTS={neutral:0,round:0.5,flat:-0.5};
+const WRIST_SHAPE_LUG_ADJUSTMENTS={neutral:0,round:-1.5,flat:1.5};
 
 function wristInches(){
  let v=parseFloat(document.getElementById("wrist").value)||0;
@@ -103,28 +112,29 @@ function calculate(){
  const unit=document.getElementById("unit").value;
  const d=parseFloat(document.getElementById("diameter").value)||0;
  const c=document.getElementById("caseType").value;
+ const s=document.getElementById("wristShape").value;
  const integrated=document.getElementById("integrated").checked;
-  
+   
  let braceletAdj=0;
  if(integrated){
    braceletAdj=c==="round"?1:0.5;
  }
-  
+   
  const multiplier=calculateAdjustmentMultiplier(wristIn);
- const eff=d+(6.75-wristIn)*4*multiplier+CASE_ADJUSTMENTS[c]+braceletAdj;
+ const eff=d+(6.75-wristIn)*4*multiplier+CASE_ADJUSTMENTS[c]+braceletAdj+WRIST_SHAPE_ADJUSTMENTS[s];
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
  document.getElementById("explanation").innerHTML=
- `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in</b> wrist.`;
-  
+ `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> ${s} wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in neutral</b> wrist.`;
+   
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
- const maxLugToLug=circumferenceMm/Math.PI-2;
+ const maxLugToLug=circumferenceMm/Math.PI-2+WRIST_SHAPE_LUG_ADJUSTMENTS[s];
  document.getElementById("maxLugToLugDisplay").textContent=maxLugToLug.toFixed(1)+" mm";
-  
- updateURL(raw,unit,d,c,integrated?'yes':'no');
+   
+ updateURL(raw,unit,d,c,integrated?'yes':'no',s);
 }
-function updateURL(w,u,s,c,i){
- const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c,integrated:i});
+function updateURL(w,u,s,c,i,shape){
+ const p=new URLSearchParams({wrist:w,unit:u,size:s,case:c,integrated:i,shape:shape||'neutral'});
  history.replaceState({},'',location.pathname+'?'+p.toString());
 }
 function loadURL(){
@@ -133,6 +143,7 @@ function loadURL(){
  if(p.get("unit")) unit.value=p.get("unit");
  if(p.get("size")) diameter.value=p.get("size");
  if(["round","square","tonneau"].includes(p.get("case"))) caseType.value=p.get("case");
+ if(["neutral","round","flat"].includes(p.get("shape"))) document.getElementById("wristShape").value=p.get("shape");
  if(p.get("integrated")==="yes") document.getElementById("integrated").checked=true;
  calculate();
 }
