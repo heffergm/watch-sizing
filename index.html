@@ -33,6 +33,7 @@ button{margin-top:10px;width:100%}
 <p><b>Assumptions:</b> 6.75 inches represents the baseline wrist circumference against which watch sizing is calibrated.</p>
 <p>At this baseline, a 40mm watch serves as the reference point: its perceived size is assumed to match its stated diameter without adjustment.</p>
 <p>Every 0.25" below baseline adds 1 mm to perceived sizing; every 0.25" above subtracts 1 mm.</p>
+<p><b>Sliding Dampening:</b> The size adjustment smoothly decreases as wrist size moves away from the baseline. At extreme sizes (very large or very small wrists), the adjustment is dampened to reflect how watches actually appear.</p>
 
 <label>Wrist Size</label>
 <div class="row">
@@ -85,13 +86,7 @@ function calculateAdjustmentMultiplier(wristIn){
  const baseline=6.75;
  const deviation=Math.abs(wristIn-baseline);
  
- if(deviation<=0.25) return 1.0;
- 
- if(deviation<=1.0){
-   return 1.0-((deviation-0.25)*0.40);
- }
- 
- return 0.70-((deviation-1.0)*0.35);
+ return 1.0/(1.0+0.15*deviation*deviation);
 }
 function calculate(){
  const wristIn=wristInches();
