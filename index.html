@@ -85,27 +85,6 @@ button{margin-top:10px;width:100%}
 <div id="output" class="size"></div>
 <div id="fitCategory" style="font-size:18px;color:#333;margin-top:6px"></div>
 <div id="explanation" class="explanation"></div>
-
-<div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd">
-<div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:bold">Visual Size Comparison</div>
-<div style="display:flex;justify-content:center;background:#f9f9f9;padding:20px;border-radius:8px;margin-bottom:12px">
-<svg id="previewSVG" width="280" height="280" viewBox="0 0 280 280" style="max-width:100%">
-  <defs>
-   <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-     <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
-   </filter>
-  </defs>
-  <!-- Wrist ring -->
-  <circle id="wristRing" cx="140" cy="140" r="100" fill="none" stroke="#e0e0e0" stroke-width="35" filter="url(#shadow)"/>
-  <!-- Watch case -->
-  <circle id="watchCase" cx="140" cy="140" r="50" fill="#f5f5f5" stroke="#333" stroke-width="2.5" filter="url(#shadow)"/>
-  <!-- Watch dial center -->
-  <circle id="watchDialCenter" cx="140" cy="140" r="45" fill="#fafafa" stroke="none"/>
-</svg>
-</div>
-<div style="text-align:center;font-size:12px;color:#888"><i>Top-down view: watch size relative to wrist circumference</i></div>
-</div>
-
 <div style="margin-top:20px;padding-top:20px;border-top:1px solid #ddd">
 <div style="font-size:14px;color:#666;margin-bottom:8px;font-weight:bold">Your Maximum Lug-to-Lug</div>
 <div id="maxLugToLugDisplay" style="font-size:24px;font-weight:bold;color:#0969da"></div>
@@ -194,68 +173,8 @@ function calculate(){
  }
   
  document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance.toFixed(1)}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]} mm wrist shape adjustment</i>`;
-  
- // update visual preview
- updateVisualPreview(circumferenceMm,eff,fit);
-      
+     
  updateURL(raw,unit,d,c,integrated?'true':'false',s,enteredLugRaw);
-}
-function updateVisualPreview(circumferenceMm,eff,fit){
-  // Calculate wrist radius from circumference (mm to SVG units)
-  const wristRadius=circumferenceMm/(2*Math.PI);
-  
-  // Calculate watch radius from effective size
-  const watchRadius=eff/2;
-  
-  // Scale to fit nicely in 280x280 SVG (140 = center, max visible radius ~110)
-  // We want wrist to be visible as a ring
-  const maxVisibleRadius=105;
-  let scale;
-  if(wristRadius>watchRadius){
-    scale=maxVisibleRadius/wristRadius;
-  }else{
-    scale=maxVisibleRadius/watchRadius;
-  }
-  
-  const scaledWristRadius=wristRadius*scale;
-  const scaledWatchRadius=watchRadius*scale;
-  
-  // Constrain watch radius to not exceed wrist
-  const constrainedWatchRadius=Math.min(scaledWatchRadius,scaledWristRadius-10);
-  
-  const wristRing=document.getElementById("wristRing");
-  const watchCase=document.getElementById("watchCase");
-  const watchDialCenter=document.getElementById("watchDialCenter");
-  
-  // Update SVG elements
-  wristRing.setAttribute("r",scaledWristRadius.toFixed(1));
-  wristRing.setAttribute("stroke-width",(scaledWristRadius*0.35).toFixed(1));
-  
-  watchCase.setAttribute("r",constrainedWatchRadius.toFixed(1));
-  watchDialCenter.setAttribute("r",(constrainedWatchRadius-2.5).toFixed(1));
-  
-  // Color code based on fit
-  let watchColor='#f5f5f5';
-  let ringColor='#e0e0e0';
-  if(fit.includes('Undersize')){
-    watchColor='#fff3cd';
-    ringColor='#ffe69c';
-  }else if(fit.includes('Classic')){
-    watchColor='#d1e7dd';
-    ringColor='#b1e5d5';
-  }else if(fit.includes('Modern Standard')){
-    watchColor='#cfe2ff';
-    ringColor='#a8d5ff';
-  }else if(fit.includes('Modern Large')){
-    watchColor='#f6d5d5';
-    ringColor='#f5b8b8';
-  }else if(fit.includes('Oversize')){
-    watchColor='#f8d7da';
-    ringColor='#f5c6cb';
-  }
-  
-  watchDialCenter.setAttribute("fill",watchColor);
-  wristRing.setAttribute("stroke",ringColor);
 }
 function updateURL(w,u,s,c,i,shape,lug){
  const p=new URLSearchParams({wrist_circumference:w,unit:u,watch_diameter:s,watch_case_type:c,watch_integrated_bracelet:i,wrist_shape:shape||'neutral',watch_lug2lug:lug||''});
