@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Watch Effective Size Calculator</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23f4f4f4' stroke='%23333' stroke-width='2'/><circle cx='50' cy='50' r='45' fill='%23fff' stroke='%23333' stroke-width='1.5'/><line x1='50' y1='50' x2='50' y2='20' stroke='%23333' stroke-width='2' stroke-linecap='round'/><line x1='50' y1='50' x2='65' y2='50' stroke='%23333' stroke-width='1.5' stroke-linecap='round'/><circle cx='50' cy='50' r='3' fill='%23333'/><circle cx='50' cy='15' r='2.5' fill='%23333'/><circle cx='75' cy='50' r='2.5' fill='%23333'/><circle cx='50' cy='85' r='2.5' fill='%23333'/><circle cx='25' cy='50' r='2.5' fill='%23333'/></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23f4f4f4' stroke='%23333' stroke-widt[...]"/>
 <style>
 body{font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:40px}
 .container{max-width:560px;margin:auto;background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.15)}
@@ -35,10 +35,7 @@ button{margin-top:10px;width:100%}
 <div class="container">
 <h2>Watch Effective Size Calculator</h2>
 <p style="font-style:italic;color:#666;margin-top:6px">Disclaimer: wear whatever you like :)</p>
-<p><b>Assumptions:</b> 6.75 inches represents the baseline wrist circumference against which watch sizing is calibrated.</p>
-<p>At this baseline, a 40mm watch serves as the reference point: its perceived size is assumed to match its stated diameter without adjustment.</p>
-<p>Every 0.25" below baseline adds 1 mm to perceived sizing; every 0.25" above subtracts 1 mm.</p>
-<p><b>NOTE:</b> the calculator smoothly reduces the per-quarter-inch size adjustment the farther your wrist is from the 6.75" baseline, producing a continuous transition across all sizes and preventing exaggerated changes at the extremes.</p>
+<p>More details and the methodology for this calculator are available in the project repository: <a href="https://github.com/heffergm/watch-sizing" target="_blank" rel="noopener noreferrer">heffergm/watch-sizing</a>. See the repository for full explanation and source.</p>
 
 <div class="section" style="margin-bottom:14px">
   <h3 style="margin:0 0 8px 0;font-size:16px">Wrist Details</h3>
@@ -155,7 +152,7 @@ function calculate(){
  document.getElementById('fitCategory').textContent=fit;
 
  document.getElementById("explanation").innerHTML=
- `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> ${s} wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b> watch on a <b>6.75 in neutral</b> wrist.`;
+ `A <b>${d.toFixed(1)} mm ${c}</b> watch on a <b>${raw} ${unit}</b> ${s} wrist${integrated?' with integrated bracelet':''} has approximately the visual presence of a <b>${eff.toFixed(1)} mm round</b>`;
   
  const circumferenceIn=wristIn;
  const circumferenceMm=circumferenceIn*25.4;
@@ -175,8 +172,8 @@ function calculate(){
    maxDisplay.style.color='#0969da';
  }
   
- document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance.toFixed(1)}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]}mm (shape adjustment)</i>`;
-    
+ document.getElementById("lugExplanation").innerHTML=`<i>Calculated as wrist circumference ÷ π − ${comfortAllowance.toFixed(1)}mm (${s} wrist comfort allowance) + ${WRIST_SHAPE_LUG_ADJUSTMENTS[s]} mm wrist shape adjustment</i>`;
+     
  updateURL(raw,unit,d,c,integrated?'true':'false',s,enteredLugRaw);
 }
 function updateURL(w,u,s,c,i,shape,lug){
