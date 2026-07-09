@@ -144,8 +144,8 @@ function calculate(){
  document.getElementById("output").textContent=eff.toFixed(1)+" mm";
  // determine fit category
  let fit='';
- if(eff<31) fit='Fit: Undersize';
- else if(eff>=31 && eff<=36) fit='Fit: Classic';
+ if(eff<32) fit='Fit: Undersize';
+ else if(eff>=32 && eff<=36) fit='Fit: Classic';
  else if(eff>36 && eff<=40) fit='Fit: Modern Standard';
  else if(eff>40 && eff<=44) fit='Fit: Modern Large';
  else if(eff>44) fit='Fit: Oversize';
